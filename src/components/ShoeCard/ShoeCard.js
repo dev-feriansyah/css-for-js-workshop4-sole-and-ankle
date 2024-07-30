@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components/macro';
+import React from 'react'
+import styled from 'styled-components/macro'
 
-import { COLORS, WEIGHTS } from '../../constants';
-import { formatPrice, pluralize, isNewShoe } from '../../utils';
-import Spacer from '../Spacer';
+import { COLORS, WEIGHTS } from '../../constants'
+import { formatPrice, pluralize, isNewShoe } from '../../utils'
+import Spacer from '../Spacer'
 
 const ShoeCard = ({
   slug,
@@ -36,51 +36,79 @@ const ShoeCard = ({
       <Wrapper>
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
+          <VariantTag variant={variant}>
+            {variant === 'new-release' ? 'Just released!' : 'Sale'}
+          </VariantTag>
         </ImageWrapper>
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price isSalePrice={salePrice}>{formatPrice(price)}</Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          {salePrice && <SalePrice>{formatPrice(salePrice)}</SalePrice>}
         </Row>
       </Wrapper>
     </Link>
-  );
-};
+  )
+}
+
+const VariantTag = styled.span`
+  position: absolute;
+  top: 12px;
+  right: -4px;
+  padding: 8px 12px;
+  font-size: calc(14 / 16 * 1rem);
+  font-weight: 700;
+  background: ${(p) =>
+    p.variant === 'on-sale' ? COLORS.primary : COLORS.secondary};
+  color: white;
+  border-radius: 2px;
+  display: ${(p) => (p.variant === 'default' ? 'none' : 'block')};
+`
 
 const Link = styled.a`
   text-decoration: none;
   color: inherit;
-`;
+  flex: 1 1 340px;
+`
 
-const Wrapper = styled.article``;
+const Wrapper = styled.article``
 
 const ImageWrapper = styled.div`
   position: relative;
-`;
+`
 
-const Image = styled.img``;
+const Image = styled.img`
+  display: block;
+  width: 100%;
+  border-radius: 16px 16px 4px 4px;
+`
 
 const Row = styled.div`
   font-size: 1rem;
-`;
+  display: flex;
+  justify-content: space-between;
+`
 
 const Name = styled.h3`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.gray[900]};
-`;
+`
 
-const Price = styled.span``;
+const Price = styled.span`
+  text-decoration: ${(p) => p.isSalePrice && 'line-through'};
+  color: ${(p) => (p.isSalePrice ? COLORS.gray[700] : COLORS.gray[900])};
+`
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
-`;
+`
 
 const SalePrice = styled.span`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.primary};
-`;
+`
 
-export default ShoeCard;
+export default ShoeCard

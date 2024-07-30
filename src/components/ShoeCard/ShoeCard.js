@@ -36,42 +36,54 @@ const ShoeCard = ({
       <Wrapper>
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
-          <VariantTag variant={variant}>
-            {variant === 'new-release' ? 'Just released!' : 'Sale'}
-          </VariantTag>
+          {variant === 'new-release' && <NewFlag>Just released!</NewFlag>}
+          {variant === 'on-sale' && <SaleFlag>Sale</SaleFlag>}
         </ImageWrapper>
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price isSalePrice={salePrice}>{formatPrice(price)}</Price>
+          <Price
+            style={{
+              '--color': variant === 'on-sale' ? COLORS.gray[700] : undefined,
+              '--text-decoration':
+                variant === 'on-sale' ? 'line-through' : undefined,
+            }}
+          >
+            {formatPrice(price)}
+          </Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
-          {salePrice && <SalePrice>{formatPrice(salePrice)}</SalePrice>}
+          {variant === 'on-sale' && (
+            <SalePrice>{formatPrice(salePrice)}</SalePrice>
+          )}
         </Row>
       </Wrapper>
     </Link>
   )
 }
 
-const VariantTag = styled.span`
+const Flag = styled.span`
   position: absolute;
   top: 12px;
   right: -4px;
   padding: 8px 12px;
   font-size: calc(14 / 16 * 1rem);
-  font-weight: 700;
-  background: ${(p) =>
-    p.variant === 'on-sale' ? COLORS.primary : COLORS.secondary};
+  font-weight: ${WEIGHTS.bold};
   color: white;
   border-radius: 2px;
-  display: ${(p) => (p.variant === 'default' ? 'none' : 'block')};
+`
+
+const NewFlag = styled(Flag)`
+  background-color: ${COLORS.secondary};
+`
+const SaleFlag = styled(Flag)`
+  background-color: ${COLORS.primary};
 `
 
 const Link = styled.a`
   text-decoration: none;
   color: inherit;
-  flex: 1 1 340px;
 `
 
 const Wrapper = styled.article``
@@ -98,8 +110,8 @@ const Name = styled.h3`
 `
 
 const Price = styled.span`
-  text-decoration: ${(p) => p.isSalePrice && 'line-through'};
-  color: ${(p) => (p.isSalePrice ? COLORS.gray[700] : COLORS.gray[900])};
+  text-decoration: var(--text-decoration);
+  color: var(--color);
 `
 
 const ColorInfo = styled.p`
